@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo01.mapper.BoardPostMapper">
+
+    <resultMap id="BoardPostResultMap" type="com.demo01.model.BoardPost">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="author" column="author"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="BoardPostResultMap">
+        SELECT id, title, content, author, created_at 
+        FROM board_post 
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="findById" resultMap="BoardPostResultMap">
+        SELECT id, title, content, author, created_at 
+        FROM board_post 
+        WHERE id = #{id}
+    </select>
+
+    <select id="findAttachmentsByPostId" resultType="string">
+        SELECT file_path FROM board_attachment WHERE post_id = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO board_post (title, content, author)
+        VALUES (#{title}, #{content}, #{author})
+    </insert>
+
+    <insert id="insertAttachment">
+        INSERT INTO board_attachment (post_id, file_path) VALUES (#{postId}, #{filename})
+    </insert>
+
+    <update id="update">
+        UPDATE board_post 
+        SET title = #{title}, content = #{content}, author = #{author}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM board_post WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteAttachmentsByPostId">
+        DELETE FROM board_attachment WHERE post_id = #{postId}
+    </delete>
+
+</mapper>

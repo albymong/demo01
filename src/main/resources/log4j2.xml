@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Log4j2 설정 파일
+    [설명]
+    - Log4j2 로깅 프레임워크의 설정입니다.
+    - 이 파일을 통해 로그 출력 방식, 포맷, 레벨 등을 지정합니다.
+    - 기본적으로 console(콘솔)과 file(파일)로 출력하도록 설정했습니다.
+    - 개발 시에는 console 로그를 확인하고, 운영 시에는 파일에 기록하면 됩니다.
+ -->
+<Configuration status="WARN" packages="org.apache.logging.log4j.core.config.plugins">
+    <Properties>
+        <Property name="charset">UTF-8</Property>
+    </Properties>
+    
+    <!-- Appender: 로그를 어디에 출력할지 정의 -->
+    <Appenders>
+        <!-- Console Appender: 콘솔(터미널)에 로그 출력 -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout 
+                pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
+                charset="${charset}"/>
+        </Console>
+
+        <!-- File Appender: 파일에 로그 저장 -->
+        <RollingFile name="RollingFile" fileName="logs/app.log"
+                     filePattern="logs/app-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" />
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+
+    <!-- Loggers: 각 패키지별 로그 레벨 설정 -->
+    <Loggers>
+        <!-- Spring Framework 로그 (TRACE 레벨) -->
+        <Logger name="org.springframework" level="trace" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        
+        <!-- Spring MVC 로그 (TRACE 레벨) -->
+        <Logger name="org.springframework.web" level="trace" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        
+        <!-- DispatcherServlet 로그 -->
+        <Logger name="org.springframework.web.servlet" level="trace" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- Spring JDBC 로그 - SQL 쿼리 출력 (DEBUG) -->
+        <Logger name="org.springframework.jdbc.core" level="trace" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- SQL 쿼리 파라미터 로그 -->
+        <Logger name="org.springframework.jdbc.core.StatementCreatorUtils" level="trace" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- 데이터소스 로그 -->
+        <Logger name="org.springframework.jdbc.datasource" level="trace" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+<!-- PostgreSQL JDBC 로그 (TRACE) -->
+        <Logger name="org.postgresql" level="trace" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        
+        <!-- Tomcat 로거 -->
+        <Logger name="org.apache.catalina" level="trace" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        
+        <!-- Tomcat Connector 로거 -->
+        <Logger name="org.apache.coyote" level="trace" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- 애플리케이션 기본 로그 (DEBUG 레벨) -->
+        <Logger name="com.demo01" level="trace" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- Root Logger: 기본 로그 레벨 (debug) - 모든 로그 출력 -->
+        <Root level="trace">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Root>
+    </Loggers>
+</Configuration>
